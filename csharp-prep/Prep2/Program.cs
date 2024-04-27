@@ -4,13 +4,18 @@ class Program
 {
     static void Main(string[] args)
     {
-        String grstr = null;
+        String grstr, psfl;
         Console.Write("What was your Grade? ");
         int grade = int.Parse(Console.ReadLine());
         if(grade > 100 || grade < 0){
             Console.WriteLine("Grade is invalid");
             //Id like to learn about error handling and OS interfacing with C#
             System.Environment.Exit(404);
+        }
+        if(grade >= 70){
+            psfl = "You Passed!";
+        }else{
+            psfl = "You Failed :(";
         }
         switch(grade / 10)
         {
@@ -42,6 +47,6 @@ class Program
                 grstr = grstr + "-";
             }
         }
-        Console.WriteLine("Your grade is " + grstr);
+        Console.WriteLine("Your grade is " + grstr + ". " + psfl);
     }
 }
