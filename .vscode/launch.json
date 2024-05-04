@@ -2,12 +2,39 @@
 {
     "version": "0.2.0",
     "configurations": [
-    {
-        "name": "C#: <project-name> Debug",
-        "type": "dotnet",
-        "request": "launch",
-        "projectPath": "/home/newo/Desktop/School/c#/clone/Cse210/sandbox/AMONGUS!!!!/AMONGUS!!!!.csproj"
-    },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        },
+        {
+            "name": "C#: Testing Debug",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "/home/newo/Desktop/School/c#/clone/Cse210/sandbox/Testing/bin/Debug/net8.0/Testing.dll",
+            "console": "integratedTerminal"
+
+        },
+
+        {
+            "name": "omnisharp Debug Testing",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "/home/newo/Desktop/School/c#/clone/Cse210/sandbox/Testing/bin/Debug/net8.0/Testing.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart",
+            "pipeTransport": {
+                "pipeCwd": "${workspaceFolder}",
+                "pipeProgram": "bash",
+                "pipeArgs": ["-c"],
+                "debuggerPath": "/home/newo/bin/netcoredbg/netcoredbg",
+                "quoteArgs": true
+            }
+        },
 
         {
             "name": "Sandbox Project",

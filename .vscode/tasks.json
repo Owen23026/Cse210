@@ -17,6 +17,19 @@
         },
 
         {
+            "label": "build-sandbox-Testing",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/sandbox/Testing/Testing.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+
+        {
             "label": "build-csharp-prep-Prep1",
             "command": "dotnet",
             "type": "process",

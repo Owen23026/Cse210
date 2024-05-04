@@ -11,5 +11,7 @@ class Program
     {
         String ctest = "hello";
         Console.WriteLine(ctest);
+        ctest = Console.ReadLine();
+        Console.WriteLine(ctest);
     }
 }
