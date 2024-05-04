@@ -1,0 +1,6 @@
+{
+    "terminal.integrated.accessibleViewFocusOnCommandExecution": true,
+    "terminal.integrated.bellDuration": 1,
+    "terminal.integrated.enableVisualBell": true,
+    "cmake.configureOnOpen": false
+}
