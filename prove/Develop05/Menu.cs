@@ -6,21 +6,22 @@ public class Menu
 {
 
     private List<Goal> _goals = new List<Goal>();
-    private int _points, _days;
+    private int _points, _streak;
     private string fname;
     public Menu()
     {
         Console.WriteLine("Enter the file name to load: ");
         fname = Console.ReadLine();
         Fmanager _saveload = new Fmanager(fname);
+        ConvertPull();
     }
 
 
     public void Execute()
     {
         Console.Clear();
-        Console.WriteLine("You have " + _points + " points, and a " + _days + " day streak");
-        Console.WriteLine("Menu options:\n1. Create New Goal\n2. List Goals\n3. Save Goals\n4. Load Goals\n5. Record Event" + 
+        Console.WriteLine("You have " + _points + " points, and a " + _streak + " day streak");
+        Console.WriteLine("Menu options:\n1. Create New Goal\n2. List Goals\n3. Save Goals\n4. Load Goals\n5. Record Event\n6. Change File" + 
         "\n0. Quit");
         switch(int.Parse(Console.ReadLine()))
         {
@@ -39,9 +40,23 @@ public class Menu
                 ListGoals();
                 Console.ReadLine();
                 break;
+            case 3:
+                ConvertPush();
+                Console.WriteLine("File Saved!");
+                Console.ReadKey();
+                break;
+            case 4:
 
+                ConvertPull();
+                Console.WriteLine("File Loaded!");
+                Console.ReadKey();
+                break;
             case 5:
                 RecordEvent();
+                break;
+            case 6:
+                Console.WriteLine("File name: ");
+                fname = Console.ReadLine();
                 break;
             default:
                 break;
@@ -104,6 +119,7 @@ public class Menu
 
     public void ConvertPush()
     {
+        
         //I mean, you could have journal take in a file name, but that would be a bit redundant for something that in all actuallity should likely be defined by the user
         Fmanager _fileManager = new Fmanager(fname);
         //This list will be loaded to the file.
@@ -122,6 +138,8 @@ public class Menu
             _rawList.Add(tmpdat[2]);
             _rawList.Add(tmpdat[3]);
             _rawList.Add(tmpdat[4]);
+            _rawList.Add(tmpdat[5]);
+
             if(_g == _goals[_goals.Count - 1])
             {
                 _rawList.Add("]");
@@ -146,10 +164,23 @@ public class Menu
         //we will see what this does.
         _goals.Clear();
 
-        
+        string type, title, description, count, total, points;
+        type = "";
+        title = "";
+        description = "";
+        count = "";
+        total = "";
+        points = "";
+
         int i = 0;
         foreach(string l in file_manager._raw)
         {
+            if(l.Contains("-->"))
+            {
+                string[] tempstreak;
+                tempstreak = l.Split(":");
+                
+            }
             //check if this is a special line.
             if(l.Contains("["))
             {
@@ -158,21 +189,25 @@ public class Menu
             else
             {
                 i += 1;
-                switch(i)
+                switch(i - 1)
                 {
+                    case 0:
+                        type = l;
+                        break;
                     case 1:
-                         = l;
+                        title = l;
                         break;
                     case 2:
-                        t_prompt = l;
+                        description = l;
                         break;
                     case 3:
-                        tDate = l;
+                        count = l;
                         break;
                     case 4:
-                    
+                        total = l;
                         break;
                     case 5:
+                        points = l;
                         break;
                     default:
                         //this should not happen :(
@@ -182,9 +217,32 @@ public class Menu
             //check if it has a closing bracket and write to 
             if(l.Contains("]"))
             {
-                Entry temp_entry = new Entry(t_entry, t_prompt, tDate);
-                _jData.Add(temp_entry);
+                //I need to ask for help with this problem
+                //this goal should never exist
+                Goal tempgoal = new SimpleGoal("DEBUG", "DEBUG","1", "1", "1");
+                //I really shouldve done overloading
+                switch(int.Parse(type))
+                {
+                    case 1:
+                        tempgoal = new SimpleGoal(title, description, count, total, points);
+                        break;
+                    case 2:
+                        tempgoal = new EternalGoal(title, description, count, total, points);
+                        break;
+                    case 3:
+                        tempgoal = new ChecklistGoal(title, description, count, total, points);
+                        break;
+                    default:
+                        break;
+                }
+                
+                _goals.Add(tempgoal);
             }
+        }
+
+        foreach(Goal _g in _goals)
+        {
+            points += _g.GetPoints();
         }
     }
 

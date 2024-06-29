@@ -11,6 +11,17 @@ public class EternalGoal : Goal
         _description = Console.ReadLine();
         Console.WriteLine("How many points is your Goal worth? ");
         _points = int.Parse(Console.ReadLine());
+        _type = 2;
+    }
+
+    public EternalGoal(string title, string desc, string count, string points, string total)
+    {
+        this._title = title;
+        this._description = desc;
+        this._points = int.Parse(points);
+        this._total = int.Parse(total);
+        this._count = int.Parse(count);
+        _type = 2;
     }
 
     public override void UpdateGoal()

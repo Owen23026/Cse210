@@ -22,6 +22,7 @@ public class Fmanager
 
     public void Load2Array()
     {
+        using (StreamWriter w = File.AppendText(_fname));
         using(StreamReader _fr = new StreamReader(_fname))
         {
             string _line;

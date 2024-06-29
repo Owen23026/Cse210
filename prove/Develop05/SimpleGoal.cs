@@ -14,9 +14,18 @@ public class SimpleGoal : Goal
 
         //Set total to one since this only needs activation once
         _total = 1;
+        _type = 1;
     }
 
-
+    public SimpleGoal(string title, string desc, string count, string points, string total)
+    {
+        this._title = title;
+        this._description = desc;
+        this._points = int.Parse(points);
+        this._total = int.Parse(total);
+        this._count = int.Parse(count);
+        _type = 1;
+    }
 
     public override void UpdateGoal()
     {
