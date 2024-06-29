@@ -12,6 +12,7 @@ public class EternalGoal : Goal
         Console.WriteLine("How many points is your Goal worth? ");
         _points = int.Parse(Console.ReadLine());
         _type = 2;
+        _total = -1;
     }
 
     public EternalGoal(string title, string desc, string count, string points, string total)

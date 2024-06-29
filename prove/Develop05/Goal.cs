@@ -69,4 +69,9 @@ public void PullInfo(string[] info)
     this._type = int.Parse(info[0]);
 }
 
+public int GetType()
+{
+    return _type;
+}
+
 }

@@ -116,6 +116,11 @@ public class Menu
             _points += _goals[_tmpIndex].GetPoints();
             Console.ReadKey();
             }
+            else if(_goals[_tmpIndex].GetType() == 2)
+            {
+                _points += _goals[_tmpIndex].GetPoints();
+                Console.ReadKey();
+            }
             
         }
     }
