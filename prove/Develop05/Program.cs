@@ -4,10 +4,12 @@ class Program
 {
     static void Main(string[] args)
     {
+        //Console.WriteLine(DateTime.UtcNow.ToShortDateString().Replace("/", ":") + "|");
         Menu menu = new Menu();
 
         while(true)
         {
+           
             menu.Execute();
         }
         

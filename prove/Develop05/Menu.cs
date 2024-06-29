@@ -1,4 +1,5 @@
 using System.ComponentModel.Design;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.Marshalling;
 using Develop05;
 
@@ -42,12 +43,14 @@ public class Menu
                 break;
             case 3:
                 ConvertPush();
+                Console.Clear();
                 Console.WriteLine("File Saved!");
                 Console.ReadKey();
                 break;
             case 4:
 
                 ConvertPull();
+                Console.Clear();
                 Console.WriteLine("File Loaded!");
                 Console.ReadKey();
                 break;
@@ -130,6 +133,7 @@ public class Menu
         {
             if(_g == _goals[0])
             {
+                _rawList.Add("-->" + _streak + ":" + DateTime.UtcNow.ToShortDateString().Replace("/", ":"));
                 _rawList.Add("[");
             }
             string[] tmpdat = _g.PushInfo();
@@ -172,13 +176,34 @@ public class Menu
         total = "";
         points = "";
 
-        int i = 0;
+        int i = -1;
         foreach(string l in file_manager._raw)
         {
-            if(l.Contains("-->"))
+            //this should execute at the very beginning
+            if(i == -1)
             {
-                string[] tempstreak;
-                tempstreak = l.Split(":");
+                i = 0;
+                string tempstreak;
+                tempstreak = l[3..];
+                
+                string[] datetime = tempstreak.Split(":");
+                _streak = int.Parse(datetime[0]);
+
+//why cant time be easier
+                DateTime last = new DateTime(int.Parse(datetime[3]),int.Parse(datetime[1]), int.Parse(datetime[2]));
+
+                if(((DateTime.UtcNow - last).TotalHours > 24) && (DateTime.UtcNow - last).TotalHours < 48)
+                {
+                    _streak+=1;
+                }  
+                else if((DateTime.UtcNow - last).TotalHours < 48)
+                {
+                   
+                }
+                else
+                {
+                     _streak = 0;
+                }
                 
             }
             //check if this is a special line.
@@ -242,7 +267,7 @@ public class Menu
 
         foreach(Goal _g in _goals)
         {
-            points += _g.GetPoints();
+            this._points += _g.GetPoints();
         }
     }
 
