@@ -1,0 +1,25 @@
+OK so when the program starts it should have a menu with these options:
+ 1: classes
+    (sumbenu)
+        period1
+            2. Students
+                List students
+                Edit a student
+                    (submenu with students which leads to a subenu of assignments)
+                Add students (may want to do this in a form of comma seperation. gui will definantly help.)
+            3. Assignments
+                New assignment
+            1. Class-Day
+                (run attendance, accept grades etc.)
+        period2
+        period3
+ 2: Add class
+
+
+ //verison 2
+Main menu:
+    save Load etc
+    1 class
+    2 class
+    3 class etc
+
