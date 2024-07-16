@@ -8,20 +8,76 @@
         Width="400" Height="600" Padding="4"
         x:Class="Attendance.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/clip.ico"
         Title="Attendance">
     <StackPanel>
+        <!-- try using a datatemplate to get a dynamic menu-->
         <DockPanel>
             <Menu DockPanel.Dock="Top">
-            <MenuItem Header="_File">
-                <MenuItem Header="_Save"/>
-                <Separator/>
-                <MenuItem Header="_Load"/>
-            </MenuItem>
-            <MenuItem Header="_Class">
-                <MenuItem Header="Period 1"/>
-                <MenuItem Header="Period 2"/>
-            </MenuItem>
+                <MenuItem Header="_File">
+                    <MenuItem Header="_Save"/>
+                    <Separator/>
+                    <MenuItem Header="_Load"/>
+                </MenuItem>
+                <MenuItem Header="_Class">
+                    <!-- lolllll this workssssssss. this is incredibly useful as I should be able to use it to switch class views-->
+                    <MenuItem Header="Period 1"/>
+                    <MenuItem Header="Period 2"/>
+                    <ScrollViewer Grid.Row="1">
+                            <!-- This ItemsControl show all added ToDoItems. -->
+                            <!-- It needs to be placed inside a ScrollViewer because other than a ListBox it has not its own -->
+                            <ItemsControl ItemsSource="{Binding StudentItems}">
+                                    <ItemsControl.ItemTemplate>
+                                        <!--  The ItemTemplate defines how each item should be represented  -->
+                                        <!--  Our Item will be represented by a CheckBox and a Delete-Button  -->
+                                        <DataTemplate DataType="vm:StudentItemViewModel">
+                                            <Grid ColumnDefinitions="*, Auto">
+                                                <CheckBox Content="{Binding Content}"
+                                                        IsChecked="{Binding IsChecked}" />
+
+                                                <!--  Note how we use the Root-Grid to get the MainViewModel here. As we use compiled bindings we have to cast the DataContext  -->
+                                                <Button Command="{Binding #Root.((vm:MainWindowViewModel)DataContext).MoreInfoCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        Grid.Column="1">
+                                                    More information
+                                                </Button>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                </MenuItem>
+                <MenuItem Header="_Recursion">
+                    <MenuItem Header="_Recursion">
+                        <MenuItem Header="_Recursion">
+                            <MenuItem Header="_Recursion">
+                                <MenuItem Header="_Recursion">
+                                    <MenuItem Header="_Recursion">
+                                        <MenuItem Header="_Recursion">
+                                            <MenuItem Header="_Recursion">
+                                                <MenuItem Header="_Recursion">
+                                                    <MenuItem Header="_Recursion">
+                                                        <MenuItem Header="_Recursion">
+                                                            <MenuItem Header="_Recursion">
+                                                                <MenuItem Header="_Recursion">
+                                                                    <MenuItem Header="_Recursion">
+                                                                        <MenuItem Header="_I lied, it wasnt actually recursion">
+                                                                                    
+                                                                        </MenuItem>
+                                                                    </MenuItem>
+                                                                </MenuItem>
+                                                            </MenuItem>
+                                                        </MenuItem>
+                                                    </MenuItem>
+                                                </MenuItem>
+                                            </MenuItem>
+                                        </MenuItem>
+                                    </MenuItem>
+                                </MenuItem>
+                            </MenuItem>
+                        </MenuItem>
+                    </MenuItem>
+                </MenuItem>
             </Menu>
             <TextBlock/>
         </DockPanel>

@@ -76,4 +76,10 @@ public MainWindowViewModel()
         StudentItems.Add(new StudentItemViewModel() {Content = _slist[i]});
     }
 }
+
+
+private void AddPeriod()
+{
+
+}
 }
