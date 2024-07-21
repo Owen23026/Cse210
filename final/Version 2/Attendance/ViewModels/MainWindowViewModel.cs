@@ -35,6 +35,7 @@ private string? _newItemContent;
 [NotifyCanExecuteChangedFor(nameof(AddPeriodCommand))] // This attribute will invalidate the command each time this property changes
 private string? _newPeriodContent;
 
+private Save svFile = new("save/save.txt");
 
 
 //only add a student if there is already a class selected. there shouldnt be random students in ram
@@ -84,8 +85,17 @@ private void MoreInfo(StudentItemViewModel item)
 //Yes
 public MainWindowViewModel()
 {
+    //_periods = svFile.GetTitles();
 
+    foreach(string t in svFile.GetTitles())
+    {
+        _periods.Add(new PeriodViewModel{ Title = t});
+    }
     
+    if(_periods.Count > 0)
+    {
+        _last = svFile.GetTitles()[0];
+    }
     
     
 }
@@ -99,8 +109,12 @@ public ObservableCollection<PeriodViewModel> _periods { get; set; } = [];
 private void AddPeriod()
 {
 
-    _periods.Add(new PeriodViewModel() {Title = NewPeriodContent});
-
+    _periods.Add(new PeriodViewModel{ Title = NewPeriodContent});
+    svFile.AddPeriod(NewPeriodContent);
+    if(_periods.Count <= 1)
+    {
+        _last = svFile.GetTitles()[0];
+    }
     // reset the NewItemContent
     NewPeriodContent = null;
 
@@ -111,10 +125,11 @@ private void RemovePeriod()
 {
     //lets just get this code working ,then Ill worry about ui later
     Console.Write("Removing " + _periods[Index].Title);
+    svFile.RemovePeriod(_periods[Index].Title);
     _periods.Remove(_periods[Index]);
+    
     //lower the index so that items arent randomly removed
     Index = -1;
-    Last = null;
     
 }
 
@@ -122,9 +137,9 @@ private void RemovePeriod()
 
 //get ready for some tokyo drifting code.
 //lets try and call switch2period, and set "last" in the constructor so that we dont get any errors with last not being assigned
-[ObservableProperty]
-[NotifyCanExecuteChangedFor(nameof(AddItemCommand))]
-private PeriodViewModel? _last = null;
+
+private string? _last;
+
 [ObservableProperty]
 [NotifyCanExecuteChangedFor(nameof(RemovePeriodCommand))]
 [NotifyCanExecuteChangedFor(nameof(AddItemCommand))]
@@ -134,66 +149,28 @@ private int _index = -1;
 [RelayCommand]
 private void Switch2Period(PeriodViewModel period)
 {
-    Index = _periods.IndexOf(period);
-    Console.WriteLine("index is" + Index.ToString());
-   
-    
-    //PeriodViewModel _current = period.NoRef();
-    //what needs to be done: The last period needs to be saved to matrix.
-
-    
-
-
-
-    if(Last == null)
+    Index = svFile.GetTitles().IndexOf(period.Title);
+    ObservableCollection<string> studentFileWrite = [];
+    ObservableCollection<string> studentFileRead = [];
+// for a file based approach that is easier on ram, we need to first: 
+// get the current list and its corresponding file location, and load student items to the file
+    foreach(StudentItemViewModel sd in StudentItems)
     {
-       // _last = new PeriodViewModel {Title = period.Title, Students = StudentItems};
-        period.Students = StudentItems;
-        _periods[Index] = period;
-        //Last = _periods[Index];
-        Console.Write("Last was Null");
-        
-        
+        studentFileWrite.Add(sd.Content);
     }
-    else
-    {   
-        //Console.WriteLine(Last.Students.ToString());
-        //before changing last, get the index of the last list, then, set that index to the modified last
-        int _lIndex = _periods.IndexOf(Last);
-        //Console.WriteLine(_periods.Contains(Last).ToString());
-        Last.Students.Clear();
-        foreach(StudentItemViewModel sd in StudentItems)
-        {
-            Console.WriteLine(sd.Content);
-            Last.Students.Add(sd);
-        }
-       
-        _periods[_lIndex] = Last;
-
-        //finally, write the input's students to studentItems and set last to the last index
-        //Console.WriteLine(_current.Students[0].Content);
-        //StudentItems = [];
-        this.StudentItems.Clear();
-        ObservableCollection<StudentItemViewModel> _newlist = period.GetStudents();
-        
-        foreach(StudentItemViewModel sd in period.GetStudents())
-        {
-            Console.WriteLine(sd.Content);
-            this.StudentItems.Add(sd);
-        }
-        
-        
-        
-        
-        
+    svFile.SetStudents(_last, studentFileWrite);
+//then we can find the new title in the file and load the strings to studentitems.
+    StudentItems.Clear();
+    studentFileRead = svFile.GetStudents(period.Title);
+    foreach(string sd in studentFileRead)
+    {
+        StudentItems.Add(new StudentItemViewModel{IsChecked = true, Content = sd});
     }
 
-    //Console.WriteLine("Success! : " + period.ToDebugString());
-    Last = _periods[Index];
-    //set the collection to a new one if its null
-    StudentItems ??= [];
-    UpdateSDItems();
-    Console.Write("Switched to" + Last.Title);
+    _last = period.Title;
+    Console.WriteLine(_last);
+
+    
 }
 
 

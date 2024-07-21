@@ -1,0 +1,5 @@
+I made a lot of prograss today. Axaml is starting to come much more naturally, and I am understanding the framework more deeply.
+You can do a lot with data templates
+a window literally just inherits from the window superclass and you can make them whenever
+
+the is modifier can compare objects and what type they are.
