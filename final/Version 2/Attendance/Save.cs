@@ -38,7 +38,7 @@ public class Save
         int i = 0;
         while(l != null)
         {
-            Console.WriteLine(_raw.Count.ToString());
+            //Console.WriteLine(_raw.Count.ToString());
             l = _raw[i];
             if(l.Contains("{"))
             {
@@ -181,17 +181,17 @@ public class Save
     public void AddPeriod(string title)
     {
         LoadRaw();
-        foreach(string l in _raw)
-        {
-            Console.WriteLine(l);
-        }
+        // foreach(string l in _raw)
+        // {
+        //     Console.WriteLine(l);
+        // }
         _raw.Add(title);
         _raw.Add("{");
         _raw.Add("}");
-        foreach(string l in _raw)
-        {
-            Console.WriteLine(l);
-        }
+        // foreach(string l in _raw)
+        // {
+        //     Console.WriteLine(l);
+        // }
         SaveFile();
     }
     public void RemovePeriod(string title)

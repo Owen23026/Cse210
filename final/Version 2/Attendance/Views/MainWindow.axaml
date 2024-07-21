@@ -15,9 +15,10 @@
         <DockPanel>
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="File">
-                    <MenuItem Header="Save" Command="{Binding DebugListCommand}"/>
+                    <!-- Lol these do the same thing for now -->
+                    <MenuItem Header="Save" Command="{Binding UpdateEverythingCommand}"/>
                     <Separator/>
-                    <MenuItem Header="Load" Command="{Binding DebugGetStudentsCommand}"/>
+                    <MenuItem Header="Load" Command="{Binding UpdateEverythingCommand}"/>
                 </MenuItem>
                 <MenuItem Header="Edit">
                     <MenuItem Header="Student"/>

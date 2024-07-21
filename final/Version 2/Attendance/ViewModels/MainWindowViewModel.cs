@@ -11,6 +11,7 @@ using System.Data.SqlTypes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.ComponentModel;
 using DynamicData;
+using Avalonia.Controls.Converters;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
@@ -94,7 +95,7 @@ public MainWindowViewModel()
     
     if(_periods.Count > 0)
     {
-        _last = svFile.GetTitles()[0];
+        _last = null;
     }
     
     
@@ -127,7 +128,8 @@ private void RemovePeriod()
     Console.Write("Removing " + _periods[Index].Title);
     svFile.RemovePeriod(_periods[Index].Title);
     _periods.Remove(_periods[Index]);
-    
+    //clear the list, as it should only ever contain students of the selected period
+    StudentItems.Clear();
     //lower the index so that items arent randomly removed
     Index = -1;
     
@@ -154,76 +156,140 @@ private void Switch2Period(PeriodViewModel period)
     ObservableCollection<string> studentFileRead = [];
 // for a file based approach that is easier on ram, we need to first: 
 // get the current list and its corresponding file location, and load student items to the file
-    foreach(StudentItemViewModel sd in StudentItems)
-    {
-        studentFileWrite.Add(sd.Content);
+
+//ok, so we have students and datetimes. We need to check if a
+    if(_last != null){
+        studentFileWrite = svFile.GetStudents(_last);
+
+        foreach(StudentItemViewModel sdv in StudentItems)
+        {
+            bool studentNameIsInFile = false;
+            ObservableCollection<string> fpebbles = svFile.GetStudents(_last);
+            foreach(string info in fpebbles)
+            {
+                //check each line of the student info list for a student's name
+                Console.WriteLine(info + "   " + sdv.Content);
+                if(info.Contains(sdv.Content))
+                {
+                    //Console.WriteLine(sdv.Content + "is in file");
+                    studentNameIsInFile = true;
+                    if(!info.Contains(DateTime.UtcNow.ToShortDateString().Replace("/", ":")) && !sdv.IsChecked)
+                    {
+                        // ischecked + contained = remove
+                        // ischecked + empty = noth
+                        // notchecket + contained = n
+                        // notchecked + empty = add
+                        //if the current line has the student name, but doesnt have the current datetime, and the student isnt checked, than add the datetime
+                        studentFileWrite[studentFileWrite.IndexOf(info)] = studentFileWrite[studentFileWrite.IndexOf(info)] + "-" + DateTime.UtcNow.ToShortDateString().Replace("/", ":");
+                    }
+                    if(sdv.IsChecked && info.Contains(DateTime.UtcNow.ToShortDateString().Replace("/", ":")))
+                    {
+                        studentFileWrite[studentFileWrite.IndexOf(info)] = info.Substring(0, info.IndexOf("-" + DateTime.UtcNow.ToShortDateString().Replace("/", ":")));
+                    }
+                }
+                else
+                {
+                    //Console.WriteLine(sdv.Content + " isnt in file");
+                }
+
+            }
+            if(studentNameIsInFile == false)
+            {
+                if(sdv.IsChecked)
+                {
+                    studentFileWrite.Add(sdv.Content);
+                }else
+                {
+                    studentFileWrite.Add(sdv.Content + "-" + DateTime.UtcNow.ToShortDateString().Replace("/", ":"));
+                }
+            }
+        }
+        svFile.SetStudents(_last, studentFileWrite);
     }
-    svFile.SetStudents(_last, studentFileWrite);
+    
 //then we can find the new title in the file and load the strings to studentitems.
     StudentItems.Clear();
     studentFileRead = svFile.GetStudents(period.Title);
     foreach(string sd in studentFileRead)
     {
-        StudentItems.Add(new StudentItemViewModel{IsChecked = true, Content = sd});
+       // Console.Write("Loading file to list");
+        if(sd.Contains(DateTime.UtcNow.ToShortDateString().Replace("/", ":")))
+        {
+            StudentItems.Add(new StudentItemViewModel{IsChecked = false, Content = sd.Substring(0, sd.IndexOf("-"))});
+        } 
+        else if(sd.Contains("-"))
+        {
+            StudentItems.Add(new StudentItemViewModel{IsChecked = true, Content = sd.Substring(0, sd.IndexOf("-"))});
+        } 
+        else
+        {
+            StudentItems.Add(new StudentItemViewModel{IsChecked = true, Content = sd});
+        }
+        
     }
 
     _last = period.Title;
-    Console.WriteLine(_last);
+    Console.WriteLine(_last); 
+    //"-->" + _streak + ":" + DateTime.UtcNow.ToShortDateString().Replace("/", ":")
 
-    
 }
 
-
+//this takes a string since I didnt want to delve too much into avalonia command parameters
 [RelayCommand]
-private void DebugList()
+private void UpdateEverything()
 {
-    //StudentItems.Add(new StudentItemViewModel(new StudentItem{Content = "bruh", IsChecked = false}));
-    
-}
-
-private void MoveCollections(ObservableCollection<StudentItemViewModel> l1, ObservableCollection<StudentItemViewModel> l2)
-{
-    Console.Write("mv");
-    if(l1 == null){l1 = [];}
-    l2 = [];
-
-    for(int i = 0; i < l1.Count; i++)
+    if(_last != null)
     {
-        l2.Add(l1[i]);
-        Console.WriteLine(l2[i].Content);
+
+        Index = svFile.GetTitles().IndexOf(_last);
+        ObservableCollection<string> studentFileWrite = [];
+        ObservableCollection<string> studentFileRead = [];
+    // for a file based approach that is easier on ram, we need to first: 
+    // get the current list and its corresponding file location, and load student items to the file
+        if(_last != null){
+            foreach(StudentItemViewModel sd in StudentItems)
+            {
+                //check the file for datetimes
+                
+
+
+
+                if(sd.IsChecked)
+                {
+                    studentFileWrite.Add(sd.Content);
+                }
+                else
+                {
+                    studentFileWrite.Add(sd.Content + "-" + DateTime.UtcNow.ToShortDateString().Replace("/", ":"));
+                }
+                
+            }
+            svFile.SetStudents(_last, studentFileWrite);
+        }
+        
+    //then we can find the new title in the file and load the strings to studentitems.
+        StudentItems.Clear();
+        studentFileRead = svFile.GetStudents(_last);
+        foreach(string sd in studentFileRead)
+        {
+            Console.Write("Loading file to list");
+            if(sd.Contains(DateTime.UtcNow.ToShortDateString().Replace("/", ":")))
+            {
+                StudentItems.Add(new StudentItemViewModel{IsChecked = false, Content = sd.Substring(0, sd.IndexOf("-"))});
+            } 
+            else if(sd.Contains("-"))
+            {
+                StudentItems.Add(new StudentItemViewModel{IsChecked = true, Content = sd.Substring(0, sd.IndexOf("-"))});
+            } 
+            else
+            {
+                StudentItems.Add(new StudentItemViewModel{IsChecked = true, Content = sd});
+            }
+            
+        }
+
+        Console.WriteLine(_last); 
+        //"-->" + _streak + ":" + DateTime.UtcNow.ToShortDateString().Replace("/", ":")
     }
 }
-
-[RelayCommand]
-private void DebugGetStudents()
-{
-    //set the collection to a new one if its null
-    StudentItems ??= [];
-    
-    foreach(StudentItemViewModel sd in StudentItems)
-    {
-        Console.WriteLine(sd.Content);
-    }
-    
-}
-
-private void UpdateSDItems()
-{
-    //set the collection to a new one if its null
-    StudentItems ??= [];
-    ObservableCollection<StudentItemViewModel> temp = new ObservableCollection<StudentItemViewModel>();
-    StudentItems.Clear();
-
-    //get ready for memory usage 900000
-    foreach(StudentItemViewModel sd in StudentItems)
-    {
-        //oh dear
-        temp.Add(new StudentItemViewModel(sd.GetStudentItem()));
-    }
-    foreach(StudentItemViewModel sd in temp)
-    {
-        StudentItems.Add(sd);
-    }
-}
-    
 }

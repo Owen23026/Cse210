@@ -1,10 +1,11 @@
-1
+first class
 {
-among us
-hello world
+a student-5:3:22-7:21:2024
+another
+a third one
+this one was absent-7:21:2024
 }
-2
+3
 {
-ben
-robert
+this class shoud just have this student
 }
